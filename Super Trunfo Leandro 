@@ -1,0 +1,219 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Estrutura para representar uma carta de cidade
+typedef struct {
+    char codigo[4]; // Ex: A01
+    long long populacao;
+    double area;
+    long long pib;
+    int pontos_turisticos;
+    // Propriedades calculadas (Nível Aventureiro)
+    double densidade_populacional;
+    double pib_per_capita;
+} CartaCidade;
+
+// Função para cadastrar uma carta (Nível Novato)
+void cadastrar_carta(CartaCidade *carta, char estado, int cidade_num) {
+    sprintf(carta->codigo, "%c%02d", estado, cidade_num);
+    printf("\n--- Cadastro da Carta %s ---\n", carta->codigo);
+    printf("População: ");
+    scanf("%lld", &carta->populacao);
+    printf("Área (km²): ");
+    scanf("%lf", &carta->area);
+    printf("PIB (em milhões): ");
+    scanf("%lld", &carta->pib);
+    printf("Número de pontos turísticos: ");
+    scanf("%d", &carta->pontos_turisticos);
+}
+
+// Função para calcular propriedades adicionais (Nível Aventureiro)
+void calcular_propriedades(CartaCidade *carta) {
+    if (carta->area > 0) {
+        carta->densidade_populacional = (double)carta->populacao / carta->area;
+    } else {
+        carta->densidade_populacional = 0.0; // Evitar divisão por zero
+    }
+    if (carta->populacao > 0) {
+        carta->pib_per_capita = (double)carta->pib / carta->populacao;
+    } else {
+        carta->pib_per_capita = 0.0; // Evitar divisão por zero
+    }
+}
+
+// Função para exibir os dados de uma carta (Nível Novato e Aventureiro)
+void exibir_carta(const CartaCidade *carta) {
+    printf("\n--- Dados da Carta %s ---\n", carta->codigo);
+    printf("População: %lld\n", carta->populacao);
+    printf("Área: %.2lf km²\n", carta->area);
+    printf("PIB: %lld milhões\n", carta->pib);
+    printf("Pontos Turísticos: %d\n", carta->pontos_turisticos);
+    printf("Densidade Populacional: %.2lf hab/km²\n", carta->densidade_populacional);
+    printf("PIB per Capita: %.2lf milhões/hab\n", carta->pib_per_capita);
+}
+
+// Função para comparar duas cartas (Nível Mestre)
+void comparar_cartas(const CartaCidade *carta1, const CartaCidade *carta2) {
+    printf("\n--- Comparação entre %s e %s ---\n", carta1->codigo, carta2->codigo);
+
+    // População
+    printf("População: ");
+    if (carta1->populacao > carta2->populacao) {
+        printf("%s vence (%lld > %lld)\n", carta1->codigo, carta1->populacao, carta2->populacao);
+    } else if (carta2->populacao > carta1->populacao) {
+        printf("%s vence (%lld > %lld)\n", carta2->codigo, carta2->populacao, carta1->populacao);
+    } else {
+        printf("Empate (%lld = %lld)\n", carta1->populacao, carta2->populacao);
+    }
+
+    // Área
+    printf("Área: ");
+    if (carta1->area > carta2->area) {
+        printf("%s vence (%.2lf > %.2lf)\n", carta1->codigo, carta1->area, carta2->area);
+    } else if (carta2->area > carta1->area) {
+        printf("%s vence (%.2lf > %.2lf)\n", carta2->codigo, carta2->area, carta1->area);
+    } else {
+        printf("Empate (%.2lf = %.2lf)\n", carta1->area, carta2->area);
+    }
+
+    // PIB
+    printf("PIB: ");
+    if (carta1->pib > carta2->pib) {
+        printf("%s vence (%lld > %lld)\n", carta1->codigo, carta1->pib, carta2->pib);
+    } else if (carta2->pib > carta1->pib) {
+        printf("%s vence (%lld > %lld)\n", carta2->codigo, carta2->pib, carta1->pib);
+    } else {
+        printf("Empate (%lld = %lld)\n", carta1->pib, carta2->pib);
+    }
+
+    // Pontos Turísticos
+    printf("Pontos Turísticos: ");
+    if (carta1->pontos_turisticos > carta2->pontos_turisticos) {
+        printf("%s vence (%d > %d)\n", carta1->codigo, carta1->pontos_turisticos, carta2->pontos_turisticos);
+    } else if (carta2->pontos_turisticos > carta1->pontos_turisticos) {
+        printf("%s vence (%d > %d)\n", carta2->codigo, carta2->pontos_turisticos, carta1->pontos_turisticos);
+    } else {
+        printf("Empate (%d = %d)\n", carta1->pontos_turisticos, carta2->pontos_turisticos);
+    }
+
+    // Densidade Populacional (menor valor vence)
+    printf("Densidade Populacional: ");
+    if (carta1->densidade_populacional < carta2->densidade_populacional) {
+        printf("%s vence (%.2lf < %.2lf)\n", carta1->codigo, carta1->densidade_populacional, carta2->densidade_populacional);
+    } else if (carta2->densidade_populacional < carta1->densidade_populacional) {
+        printf("%s vence (%.2lf < %.2lf)\n", carta2->codigo, carta2->densidade_populacional, carta1->densidade_populacional);
+    } else {
+        printf("Empate (%.2lf = %.2lf)\n", carta1->densidade_populacional, carta2->densidade_populacional);
+    }
+
+    // PIB per Capita
+    printf("PIB per Capita: ");
+    if (carta1->pib_per_capita > carta2->pib_per_capita) {
+        printf("%s vence (%.2lf > %.2lf)\n", carta1->codigo, carta1->pib_per_capita, carta2->pib_per_capita);
+    } else if (carta2->pib_per_capita > carta1->pib_per_capita) {
+        printf("%s vence (%.2lf > %.2lf)\n", carta2->codigo, carta2->pib_per_capita, carta1->pib_per_capita);
+    } else {
+        printf("Empate (%.2lf = %.2lf)\n", carta1->pib_per_capita, carta2->pib_per_capita);
+    }
+
+    // Super Poder (soma de todas as propriedades)
+    double super_poder1 = (double)carta1->populacao + carta1->area + (double)carta1->pib + carta1->pontos_turisticos + carta1->densidade_populacional + carta1->pib_per_capita;
+    double super_poder2 = (double)carta2->populacao + carta2->area + (double)carta2->pib + carta2->pontos_turisticos + carta2->densidade_populacional + carta2->pib_per_capita;
+
+    printf("Super Poder: ");
+    if (super_poder1 > super_poder2) {
+        printf("%s vence (%.2lf > %.2lf)\n", carta1->codigo, super_poder1, super_poder2);
+    } else if (super_poder2 > super_poder1) {
+        printf("%s vence (%.2lf > %.2lf)\n", carta2->codigo, super_poder2, super_poder1);
+    } else {
+        printf("Empate (%.2lf = %.2lf)\n", super_poder1, super_poder2);
+    }
+}
+
+int main() {
+    CartaCidade cartas[8 * 4]; // 8 estados * 4 cidades = 32 cartas
+    int num_cartas_cadastradas = 0;
+    char opcao;
+
+    do {
+        printf("\n--- Menu Super Trunfo ---\n");
+        printf("1. Cadastrar Cartas (Nível Novato/Aventureiro)\n");
+        printf("2. Exibir Cartas Cadastradas\n");
+        printf("3. Comparar Cartas (Nível Mestre)\n");
+        printf("S. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf(" %c", &opcao);
+
+        switch (opcao) {
+            case '1': {
+                if (num_cartas_cadastradas < 32) {
+                    char estado_char;
+                    int cidade_num;
+                    printf("Digite a letra do estado (A-H): ");
+                    scanf(" %c", &estado_char);
+                    printf("Digite o número da cidade (1-4): ");
+                    scanf("%d", &cidade_num);
+
+                    if (estado_char >= 'A' && estado_char <= 'H' && cidade_num >= 1 && cidade_num <= 4) {
+                        cadastrar_carta(&cartas[num_cartas_cadastradas], estado_char, cidade_num);
+                        calcular_propriedades(&cartas[num_cartas_cadastradas]);
+                        num_cartas_cadastradas++;
+                    } else {
+                        printf("Entrada inválida para estado ou número da cidade.\n");
+                    }
+                } else {
+                    printf("Limite de cartas atingido.\n");
+                }
+                break;
+            }
+            case '2': {
+                if (num_cartas_cadastradas == 0) {
+                    printf("Nenhuma carta cadastrada ainda.\n");
+                } else {
+                    for (int i = 0; i < num_cartas_cadastradas; i++) {
+                        exibir_carta(&cartas[i]);
+                    }
+                }
+                break;
+            }
+            case '3': {
+                if (num_cartas_cadastradas < 2) {
+                    printf("É necessário cadastrar pelo menos duas cartas para comparar.\n");
+                } else {
+                    char codigo1[4], codigo2[4];
+                    int idx1 = -1, idx2 = -1;
+
+                    printf("Digite o código da primeira carta para comparação (ex: A01): ");
+                    scanf("%s", codigo1);
+                    printf("Digite o código da segunda carta para comparação (ex: B02): ");
+                    scanf("%s", codigo2);
+
+                    for (int i = 0; i < num_cartas_cadastradas; i++) {
+                        if (strcmp(cartas[i].codigo, codigo1) == 0) {
+                            idx1 = i;
+                        }
+                        if (strcmp(cartas[i].codigo, codigo2) == 0) {
+                            idx2 = i;
+                        }
+                    }
+
+                    if (idx1 != -1 && idx2 != -1) {
+                        comparar_cartas(&cartas[idx1], &cartas[idx2]);
+                    } else {
+                        printf("Uma ou ambas as cartas não foram encontradas.\n");
+                    }
+                }
+                break;
+            }
+            case 'S':
+            case 's':
+                printf("Saindo do programa. Até mais!\n");
+                break;
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+}
+    } while (opcao != 'S' && opcao != 's');
+
+    return 0;
+}
